@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef __MY_TYPES_H
 #define __MY_TYPES_H
 
-#include <stdint.h>
+#include <cstdint>
 #include <string>
 
 //
@@ -36,7 +36,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define FALSE 0
 #define TRUE 1
 
-#define RGB(R,G,B) (((R) << 16) + ((G) << 8) + (B))
+#define RGB(R, G, B) (((R) << 16) + ((G) << 8) + (B))
 
 #define WHITE  RGB(255,255,255)
 #define BLACK  RGB(0,0,0)
@@ -58,7 +58,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define DRED   RGB(128,0,0)
 #define LGREY    RGB(192,192,192)
 
-typedef uint8_t  BYTE;
+typedef uint8_t BYTE;
 typedef uint16_t WORD16;
 typedef uint32_t WORD32;
 typedef uint64_t WORD64;
@@ -70,9 +70,9 @@ typedef int64_t SIGNED64;
 typedef int BOOL;
 
 typedef union {
-  WORD64 u;
-  SIGNED64 s;
-  double d;
+    WORD64 u;
+    SIGNED64 s;
+    double d;
 } DOUBLE64;
 
 #define OK      0

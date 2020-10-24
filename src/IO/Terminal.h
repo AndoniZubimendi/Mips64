@@ -20,16 +20,43 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 */
 
-#ifndef UTILS_H
-#define UTILS_H
 
-// Used in class Assembler
-BOOL in_range(WORD32, WORD32);
+#ifndef __TERMINAL_H
+#define __TERMINAL_H
 
-int compare(const char *, const char *);
+#include<iostream>
 
-int alignment(int, int);
+#include "../mytypes.h"
 
-WORD64 strtoint64(const char *ptr, const char **end, int b);
+class Terminal {
+
+public:
+    Terminal();
+
+    BOOL write(const std::string &msg) {
+        this->terminal += msg;
+        return TRUE;
+    }
+
+    BOOL clear() {
+        this->terminal = "";
+        return TRUE;
+    }
+
+    BOOL empty() const { return this->terminal.empty(); }
+
+    const std::string &getContents() const { return this->terminal; }
+
+    BOOL readNumber(WORD64 *result);
+
+    BOOL readChar(BYTE *result);
+
+    void dump();
+
+protected:
+
+    std::string terminal;
+
+};
 
 #endif

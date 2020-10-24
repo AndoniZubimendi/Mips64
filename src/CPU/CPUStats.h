@@ -20,16 +20,34 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 */
 
-#ifndef UTILS_H
-#define UTILS_H
+#ifndef CPUSTATS_H
+#define CPUSTATS_H
 
-// Used in class Assembler
-BOOL in_range(WORD32, WORD32);
+class CPUConfig;
 
-int compare(const char *, const char *);
+class CPUStats {
+public:
+    CPUStats(CPUConfig *config);
 
-int alignment(int, int);
+    void reset();
 
-WORD64 strtoint64(const char *ptr, const char **end, int b);
+    BOOL process_result(RESULT result, BOOL show);
+
+    unsigned int cycles;
+    unsigned int instructions;
+    unsigned int loads;
+    unsigned int stores;
+    unsigned int branch_taken_stalls;
+    unsigned int branch_misprediction_stalls;
+    unsigned int raw_stalls;
+    unsigned int waw_stalls;
+    unsigned int war_stalls;
+    unsigned int structural_stalls;
+
+protected:
+    void check_stalls(int status, const char *str, int rawreg, char *txt);
+
+    CPUConfig *config;
+};
 
 #endif

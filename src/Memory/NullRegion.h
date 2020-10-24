@@ -20,16 +20,47 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 */
 
-#ifndef UTILS_H
-#define UTILS_H
+#ifndef __NULLREGION_H
+#define __NULLREGION_H
 
-// Used in class Assembler
-BOOL in_range(WORD32, WORD32);
+#include "Region.h"
 
-int compare(const char *, const char *);
+class NullRegion : public Region {
 
-int alignment(int, int);
+public:
 
-WORD64 strtoint64(const char *ptr, const char **end, int b);
+    BOOL reset();
+
+    BOOL setAddressDescription(WORD32 addr, const std::string &description);
+
+    int readByte(WORD32 addr, BYTE &);
+
+    int readHalf(WORD32 addr, WORD16 &);
+
+    int readWord32(WORD32 addr, WORD32 &);
+
+    int readWord64(WORD32 addr, WORD64 &);
+
+    BOOL writeByte(WORD32 addr, BYTE);
+
+    BOOL writeHalf(WORD32 addr, WORD16);
+
+    BOOL writeWord32(WORD32 addr, WORD32);
+
+    BOOL writeWord64(WORD32 addr, WORD64);
+
+    BOOL getAsciiz(WORD32 addr, BYTE *dst, int size);
+
+    BOOL isValidAddress(WORD32 addr);
+
+    WORD32 getSize() const { return size; };
+
+protected:
+    WORD32 size;
+    BYTE *data;
+    BYTE *status;
+    std::string *line;
+
+};
 
 #endif

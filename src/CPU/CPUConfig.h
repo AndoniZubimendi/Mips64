@@ -20,16 +20,25 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 */
 
-#ifndef UTILS_H
-#define UTILS_H
+#ifndef __CPUCONFIG_H
+#define __CPUCONFIG_H
 
-// Used in class Assembler
-BOOL in_range(WORD32, WORD32);
 
-int compare(const char *, const char *);
+#include "../mytypes.h"
 
-int alignment(int, int);
+class CPUConfig {
 
-WORD64 strtoint64(const char *ptr, const char **end, int b);
+public:
+    CPUConfig();
+
+    WORD32 codesize;
+    WORD32 datasize;
+    unsigned int ADD_LATENCY;
+    unsigned int MUL_LATENCY;
+    unsigned int DIV_LATENCY;
+    BOOL delay_slot;
+    BOOL branch_target_buffer;
+    BOOL forwarding;
+};
 
 #endif

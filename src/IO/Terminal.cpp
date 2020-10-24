@@ -20,16 +20,37 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 */
 
-#ifndef UTILS_H
-#define UTILS_H
+#include "Terminal.h"
 
-// Used in class Assembler
-BOOL in_range(WORD32, WORD32);
+#include <cstdlib>
+#include <cstring>
+#include <cstdio>
 
-int compare(const char *, const char *);
 
-int alignment(int, int);
+Terminal::Terminal() {
+}
 
-WORD64 strtoint64(const char *ptr, const char **end, int b);
+void Terminal::dump() {
+    if (empty())
+        return;
+    std::cout << "Terminal: ";
+    std::cout << getContents() << std::endl;
+    clear();
+}
 
-#endif
+BOOL Terminal::readNumber(WORD64 *result) {
+    char line[MAX_PATH + 1];
+    fgets(line, MAX_PATH, stdin);
+    DOUBLE64 number;
+    if (strstr(line, "."))
+        number.d = atof(line);
+    else
+        number.s = atoll(line);
+    *result = number.u;
+    return TRUE;
+}
+
+BOOL Terminal::readChar(BYTE *result) {
+    *result = getchar();
+    return TRUE;
+}

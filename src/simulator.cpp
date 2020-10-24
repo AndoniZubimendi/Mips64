@@ -20,22 +20,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 */
 
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-
-#define __STDC_FORMAT_MACROS
-#include <inttypes.h>
+#include <cstdio>
 
 #include <string>
-#include <iostream>
 
 #include "mytypes.h"
-#include "utils.h"
-#include "Processor.h"
+#include "CPU/Processor.h"
 #include "simulator.h"
-
-#include "assembler.h"
 
 #define MMIO 0x10000
 
@@ -44,34 +35,33 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 // Simulator
 
 Simulator::Simulator(CPUConfig *config)
-  : cpu(&code, &data),
-    data(config->datasize),
-    code(config->codesize),
-    stats(config)
- {
-  Region *mmio = io.getMMRegion(); 
-  data.registerRegion("io", mmio, MMIO);
+        : cpu(&code, &data),
+          data(config->datasize),
+          code(config->codesize),
+          stats(config) {
+    Region *mmio = io.getMMRegion();
+    data.registerRegion("io", mmio, MMIO);
 
-  this->config = config;
-  data.reset();
+    this->config = config;
+    data.reset();
 
-  simulation_running = FALSE;
-  restart = FALSE;
+    simulation_running = FALSE;
+    restart = FALSE;
 
-  cpu.initialize(config);
-  history.initialize(config);
-  clear();
+    cpu.initialize(config);
+    history.initialize(config);
+    clear();
 }
 
 Simulator::~Simulator() {
 }
 
 void Simulator::clear() {
-  stats.reset();
-  cpu.setPC(0);
-  multi = 5;
+    stats.reset();
+    cpu.setPC(0);
+    multi = 5;
 
-  code.reset();
+    code.reset();
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -79,77 +69,77 @@ void Simulator::clear() {
 
 
 void Simulator::OnFileReset() {
-   // Reset the processor
-  cpu.reset();
-  clear();
+    // Reset the processor
+    cpu.reset();
+    clear();
 }
 
 void Simulator::OnFullReset() {
-  cpu.reset(TRUE);
+    cpu.reset(TRUE);
 
-  // Reset Data Memory as well
-  data.reset();
-  clear();
+    // Reset Data Memory as well
+    data.reset();
+    clear();
 }
 
 
 int Simulator::one_cycle(BOOL show) {
-  int status = 0;
-  RESULT result;
+    int status = 0;
+    RESULT result;
 
-  if (cpu.getStatus() == HALTED)
-    return HALTED;
+    if (cpu.getStatus() == HALTED)
+        return HALTED;
 
-  status = cpu.clock_tick(&result);
-  ++stats.cycles;
-  BOOL res = stats.process_result(result, show);
-  if (!res)
-    cpu.setStatus(HALTED);
+    status = cpu.clock_tick(&result);
+    ++stats.cycles;
+    BOOL res = stats.process_result(result, show);
+    if (!res)
+        cpu.setStatus(HALTED);
 
-  history.update_history(stats.cycles, result, cpu);
+    history.update_history(stats.cycles, result, cpu);
 
-  if (io.update(&data))
-    return WAITING_FOR_INPUT;
+    if (io.update(&data))
+        return WAITING_FOR_INPUT;
 
-  return status;
+    return status;
 }
 
 void Simulator::OnExecuteSingle() {
-  int status = one_cycle(TRUE);
-  if (status == WAITING_FOR_INPUT) {
-  //  pStatus->SetPaneText(0,"Esperando Entrada");
-  }
+    int status = one_cycle(TRUE);
+    if (status == WAITING_FOR_INPUT) {
+        //  pStatus->SetPaneText(0,"Esperando Entrada");
+    }
 }
 
 void Simulator::OnExecuteMulticycle() {
-  int i, status;
-  simulation_running = TRUE;
-  for (i = 0; i < multi - 1; i++) {
-    status = one_cycle(FALSE);
-    if (status)
-      break;
-  }
-  if (status == 0)
-    status = one_cycle(TRUE); // show status after last one.
+    int i, status;
+    simulation_running = TRUE;
+    for (i = 0; i < multi - 1; i++) {
+        status = one_cycle(FALSE);
+        if (status)
+            break;
+    }
+    if (status == 0)
+        status = one_cycle(TRUE); // show status after last one.
 
-  if (status == WAITING_FOR_INPUT) {
-    //pStatus->SetPaneText(0,"Esperando Entrada");
-  }
+    if (status == WAITING_FOR_INPUT) {
+        //pStatus->SetPaneText(0,"Esperando Entrada");
+    }
 
-  simulation_running = FALSE;
+    simulation_running = FALSE;
 }
 
 void Simulator::OnExecuteStop() {
-  simulation_running = FALSE;
+    simulation_running = FALSE;
 }
 
 void Simulator::OnExecuteRunto() {
-  //MSG message;
-  char buf[80];
-  int status, lapsed = 0;
-  simulation_running = TRUE;
-  //pStatus->SetPaneText(0,"Ejecutando Simulación");
-  do {
+    //MSG message;
+    char buf[80];
+    int status, lapsed = 0;
+    simulation_running = TRUE;
+    //pStatus->SetPaneText(0,"Ejecutando Simulaciï¿½n");
+    do {
 /*
     if (::PeekMessage(&message, NULL, 0, 0, PM_REMOVE))
     {
@@ -157,76 +147,76 @@ void Simulator::OnExecuteRunto() {
       ::DispatchMessage(&message);
     }
 */
-    lapsed++;
-    status = one_cycle(FALSE);
-    if (status)
-      break;
-  } while (((!code.hasBreakpoint(cpu.getPC()) && cpu.getStatus() != HALTED && simulation_running)));
-  simulation_running = FALSE;
-  if (status == WAITING_FOR_INPUT) {
-    sprintf(buf, "Simulacion Detenida luego de %d ciclos - Esperando Entrada", lapsed);
-    restart = TRUE;
-  } else {
-    sprintf(buf, "Simulacion Detenida luego de %d ciclos", lapsed);
-    restart = FALSE;
-  }
+        lapsed++;
+        status = one_cycle(FALSE);
+        if (status)
+            break;
+    } while (((!code.hasBreakpoint(cpu.getPC()) && cpu.getStatus() != HALTED && simulation_running)));
+    simulation_running = FALSE;
+    if (status == WAITING_FOR_INPUT) {
+        sprintf(buf, "Simulacion Detenida luego de %d ciclos - Esperando Entrada", lapsed);
+        restart = TRUE;
+    } else {
+        sprintf(buf, "Simulacion Detenida luego de %d ciclos", lapsed);
+        restart = FALSE;
+    }
 
-  //pStatus->SetPaneText(0, buf);
+    //pStatus->SetPaneText(0, buf);
 }
 
 int Simulator::openfile(const std::string &fname) {
-  OnFileReset();
-  data.reset(); // reset data memory
-  io.clear();
+    OnFileReset();
+    data.reset(); // reset data memory
+    io.clear();
 
-  return 0;
+    return 0;
 }
 
 void Simulator::OnFileMemory() {
-  cpu.initialize(config);
-  history.initialize(config);
-  clear();
+    cpu.initialize(config);
+    history.initialize(config);
+    clear();
 }
 
 void Simulator::toggleDelaySlot() {
-  if (config->delay_slot)
-    config->delay_slot = FALSE;
-  else
-    config->delay_slot = TRUE;
-  if (config->delay_slot)
-    config->branch_target_buffer = FALSE;
-  OnFileReset();
+    if (config->delay_slot)
+        config->delay_slot = FALSE;
+    else
+        config->delay_slot = TRUE;
+    if (config->delay_slot)
+        config->branch_target_buffer = FALSE;
+    OnFileReset();
 }
 
 void Simulator::toggleForwarding() {
-  if (config->forwarding)
-    config->forwarding = FALSE;
-  else
-    config->forwarding = TRUE;
-  OnFileReset();
+    if (config->forwarding)
+        config->forwarding = FALSE;
+    else
+        config->forwarding = TRUE;
+    OnFileReset();
 }
 
 void Simulator::toggleBtb() {
-  if (config->branch_target_buffer)
-    config->branch_target_buffer = FALSE;
-  else
-    config->branch_target_buffer = TRUE;
-  if (config->branch_target_buffer)
-    config->delay_slot = FALSE;
-  OnFileReset();
+    if (config->branch_target_buffer)
+        config->branch_target_buffer = FALSE;
+    else
+        config->branch_target_buffer = TRUE;
+    if (config->branch_target_buffer)
+        config->delay_slot = FALSE;
+    OnFileReset();
 }
 
 /** Metodos para verificar el funcionamiento del Simulador */
 
 void Simulator::dump_reg() {
-  cpu.dump();
+    cpu.dump();
 }
 
 void Simulator::dump_Terminal() {
-  io.terminal_dump();
+    io.terminal_dump();
 }
 
 void Simulator::show_screen() {
-  io.show_screen();
+    io.show_screen();
 }
 

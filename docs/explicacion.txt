@@ -1,0 +1,41 @@
+   MIPS 64 Pipeline Simulator, a la Hennesy & Patterson
+
+   Stages are executed in reverse order - WB/MEM/EX/ID/IF
+   In effect instructions are "dragged" through the pipeline
+   from the back.
+
+   However this causes problems that need to be addressed, as each stage should
+   really be executed simultaneously, taking care to do appropriate things
+   on both the Leading and Trailing clock edges.
+
+   Forwarding is handled by maintaining two sets of registers
+   the Read Registers and the Write Registers. Register status
+   is also recorded, indicating where the latest register value is available,
+   from, i.e. from the register itself, or forwarded from one of the various
+   pipeline registers. If a register is not available - from anywhere - we
+   get a stall.
+
+   If forwarding is disabled, the instruction is stalled in ID.
+
+   If forwarding is enabled the instruction is allowed to progress until
+   stalled by the unavailibility of a register.
+
+   At each pipeline stage Register values are read from the Read register,
+   (indicating its status after the last clock tick) and updated to the Write
+   register. However..
+
+   1. As WB takes place on the leading edge, it updates both Read and Write
+      Registers
+   2. A forwarded value must be nullified once a newer value becomes
+      available, so if EX is writing to a register, both its Read and Write
+      Status are updated so that earlier stages are immediately notified.
+
+   At the end of a clock-tick the write registers are copied into the Read
+   registers.
+
+   Note that only the most recently available value for a register is
+   stored. So a register display should only be updated if a register
+   has the availability status FROM_REGISTER.
+
+   Copyright (c) Mike Scott 2003
+

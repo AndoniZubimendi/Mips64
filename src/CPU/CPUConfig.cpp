@@ -20,16 +20,31 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 */
 
-#ifndef UTILS_H
-#define UTILS_H
+#include "CPUConfig.h"
 
-// Used in class Assembler
-BOOL in_range(WORD32, WORD32);
+#define MIN_CODEBITS 8
+#define MAX_CODEBITS 13
+#define MIN_DATABITS 4
+#define MAX_DATABITS 11
+#define MIN_ADD_LATENCY 2
+#define MAX_ADD_LATENCY 8
+#define MIN_MUL_LATENCY 2
+#define MAX_MUL_LATENCY 8
+#define MIN_DIV_LATENCY 10
+#define MAX_DIV_LATENCY 30
 
-int compare(const char *, const char *);
+CPUConfig::CPUConfig() {
+    unsigned int codebits, databits;
 
-int alignment(int, int);
+    codebits = 10;
+    databits = 10;
+    codesize = (WORD32) 1 << codebits;
+    datasize = (WORD32) 1 << databits;
+    ADD_LATENCY = 4;
+    MUL_LATENCY = 7;
+    DIV_LATENCY = 24;
+    forwarding = TRUE;
+    delay_slot = FALSE;
+    branch_target_buffer = FALSE;
+}
 
-WORD64 strtoint64(const char *ptr, const char **end, int b);
-
-#endif

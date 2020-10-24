@@ -20,16 +20,45 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 */
 
-#ifndef UTILS_H
-#define UTILS_H
 
-// Used in class Assembler
-BOOL in_range(WORD32, WORD32);
+#ifndef IO_H
+#define IO_H
 
-int compare(const char *, const char *);
+#include "../Memory/MemoryRegion.h"
+#include "../IO/Terminal.h"
+#include "../IO/Screen.h"
 
-int alignment(int, int);
+class DataMemory;
 
-WORD64 strtoint64(const char *ptr, const char **end, int b);
+class IO {
+
+public:
+    IO();
+
+    Region *getMMRegion();
+
+    WORD64 getData();
+
+    BOOL setData(WORD64 v);
+
+    WORD64 getControl();
+
+    BOOL clearControl();
+
+    int update(DataMemory *);
+
+    void show_screen();
+
+    void terminal_dump();
+
+    void clear();
+
+protected:
+    MemoryRegion mmio;
+
+    Terminal terminal;
+    Screen screen;
+};
+
 
 #endif

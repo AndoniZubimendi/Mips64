@@ -20,16 +20,48 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 */
 
-#ifndef UTILS_H
-#define UTILS_H
+#ifndef PIPELINEHISTORY_H
+#define PIPELINEHISTORY_H
 
-// Used in class Assembler
-BOOL in_range(WORD32, WORD32);
+// Stages
+#define IFETCH  1
+#define IDECODE 2
+#define INTEX   3
+#define ADDEX   4
+#define MULEX   5
+#define DIVEX   6
+#define MEMORY  7
+#define WRITEB  8
 
-int compare(const char *, const char *);
+typedef struct {
+    BYTE stage;
+    BYTE substage;
+    BYTE cause;
+} entry;
 
-int alignment(int, int);
+typedef struct {
+    WORD32 IR;
+    WORD32 start_cycle;
+    entry status[500];
+} record;
 
-WORD64 strtoint64(const char *ptr, const char **end, int b);
+class PipelineHistory {
+
+public:
+    PipelineHistory();
+
+    void update_history(unsigned int cycles, const RESULT &result, Processor &cpu);
+
+    BOOL initialize(CPUConfig *config);
+
+protected:
+
+    record history[50];
+    WORD32 entries;
+
+    unsigned int ADD_LATENCY;
+    unsigned int MUL_LATENCY;
+    unsigned int DIV_LATENCY;
+};
 
 #endif

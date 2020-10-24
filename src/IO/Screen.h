@@ -20,16 +20,31 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 */
 
-#ifndef UTILS_H
-#define UTILS_H
 
-// Used in class Assembler
-BOOL in_range(WORD32, WORD32);
+#ifndef SCREEN_H
+#define SCREEN_H
 
-int compare(const char *, const char *);
+class Screen {
 
-int alignment(int, int);
+public:
+    Screen(unsigned int, unsigned int);
 
-WORD64 strtoint64(const char *ptr, const char **end, int b);
+    virtual ~Screen();
+
+    WORD32 *getScreen() const { return screen; }
+
+    BOOL setPixel(unsigned int x, unsigned int y, WORD32 color);
+
+    BOOL clear();
+
+    void show();
+
+protected:
+    unsigned int max_x;
+    unsigned int max_y;
+    WORD32 *screen;
+
+    BOOL empty;
+};
 
 #endif

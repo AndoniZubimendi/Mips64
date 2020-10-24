@@ -56,9 +56,9 @@ loop:	daddi	$a0, $zero, pelota1
 	daddi	$a0, $zero, pelota6
 	jal	mostrar
 
-        daddi  $t0, $0, 500   ; Hace una demora para que el rebote no sea tan rápido. 
+        daddi  $t0, $0, 500   ; Hace una demora para que el rebote no sea tan rapido. 
 demora: daddi  $t0, $t0, -1   ; Esto genera una infinidad de RAW y BTS pero... 
-        bnez   $t0, demora    ; ¡hay que hacer tiempo igualmente! 
+        bnez   $t0, demora    ; hay que hacer tiempo igualmente! 
         j loop
 
 
@@ -69,8 +69,8 @@ mostrar: lwu    $s0, CONTROL($0)
 	lwu    $t1, 0($a0)	; Recupero color
         lbu    $t2, 8($a0)      ; Recupero Coordenada X de la pelota 
         lbu    $t3, 16($a0)      ; Recupero Coordenada Y de la pelota 
-        ld    $t4, 24($a0)      ; Recupero Dirección X de la pelota 
-        ld    $t5, 32($a0)      ; Recupero Dirección Y de la pelota 
+        ld    $t4, 24($a0)      ; Recupero Direccion X de la pelota 
+        ld    $t5, 32($a0)      ; Recupero Direccion Y de la pelota 
 
 
         daddi  $t6, $0, 5      ; Comando para dibujar un punto 
@@ -81,25 +81,25 @@ mostrar: lwu    $s0, CONTROL($0)
         sb     $t3, 5($s1) 	; Pos Y
         sd     $t6, 0($s0) 	; Dibujar
 
-        dadd   $t2, $t2, $t4   ; Mueve la pelota en la dirección actual 
+        dadd   $t2, $t2, $t4   ; Mueve la pelota en la direccion actual 
         dadd   $t3, $t3, $t5 
 
-        daddi  $t7, $0, 48     ; Comprueba que la pelota no esté en la columna de más 
+        daddi  $t7, $0, 48     ; Comprueba que la pelota no este en la columna de mas 
 
-        slt    $t8, $t7, $t2   ; a la derecha. Si es así, cambia la dirección en X. 
+        slt    $t8, $t7, $t2   ; a la derecha. Si es asi, cambia la direccion en X. 
         dsll   $t8, $t8, 1 
         dsub   $t4, $t4, $t8
 
-        slt    $t8, $t7, $t3   ; Comprueba que la pelota no esté en la fila de más arriba. 
-        dsll   $t8, $t8, 1     ; Si es así, cambia la dirección en Y. 
+        slt    $t8, $t7, $t3   ; Comprueba que la pelota no este en la fila de mas arriba. 
+        dsll   $t8, $t8, 1     ; Si es asi, cambia la direccion en Y. 
         dsub   $t5, $t5, $t8 
 
-        slti   $t8, $t2, 1     ; Comprueba que la pelota no esté en la columna de más 
-        dsll   $t8, $t8, 1     ; a la izquierda. Si es así, cambia la dirección en X. 
+        slti   $t8, $t2, 1     ; Comprueba que la pelota no este en la columna de mas 
+        dsll   $t8, $t8, 1     ; a la izquierda. Si es asi, cambia la direccion en X. 
         dadd   $t4, $t4, $t8 
 
-        slti   $t8, $t3, 1     ; Comprueba que la pelota no esté en la fila de más abajo. 
-        dsll   $t8, $t8, 1     ; Si es así, cambia la dirección en Y. 
+        slti   $t8, $t3, 1     ; Comprueba que la pelota no este en la fila de mas abajo. 
+        dsll   $t8, $t8, 1     ; Si es asi, cambia la direccion en Y. 
         dadd   $t5, $t5, $t8
 
         sw     $t1, 0($s1)     ; Dibuja la pelota. 
@@ -109,7 +109,7 @@ mostrar: lwu    $s0, CONTROL($0)
 
         sb    $t2, 8($a0)      ; Recupero Coordenada X de la pelota 
         sb    $t3, 16($a0)      ; Recupero Coordenada Y de la pelota 
-        sd    $t4, 24($a0)      ; Recupero Dirección X de la pelota 
-        sd    $t5, 32($a0)      ; Recupero Dirección Y de la pelota 
+        sd    $t4, 24($a0)      ; Recupero Direccion X de la pelota 
+        sd    $t5, 32($a0)      ; Recupero Direccion Y de la pelota 
 
 	jr	$ra

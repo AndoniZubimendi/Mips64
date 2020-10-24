@@ -27,67 +27,84 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "mytypes.h"
 #include "utils.h"
-#include "Processor.h"
-#include "assembler.h"
+#include "CPU/Processor.h"
+#include "Assembler/Assembler.h"
 
-#include "IO.h"
-#include "PipelineHistory.h"
-#include "CPUStats.h"
+#include "IO/IO.h"
+#include "CPU/PipelineHistory.h"
+#include "CPU/CPUStats.h"
 
 class Simulator {
- public: // create from serialization only
-  Simulator(CPUConfig *config);
-  virtual ~Simulator();
+public: // create from serialization only
+    explicit Simulator(CPUConfig *config);
 
-  int openfile(const std::string &);
-  int isRunning() const { return cpu.getStatus() != HALTED; }
+    virtual ~Simulator();
 
-  void toggleDelaySlot();
-  void toggleForwarding();
-  void toggleBtb();
+    int openfile(const std::string &);
 
-  CodeMemory *getCodeMemory() { return &code; }
-  DataMemory *getDataMemory() { return &data; }
-  const CPUStats &getStats() const { return stats; }
+    int isRunning() const { return cpu.getStatus() != HALTED; }
 
- protected:
+    void toggleDelaySlot();
 
-  Processor cpu;
+    void toggleForwarding();
 
-  DataMemory data;
-  CodeMemory code;
+    void toggleBtb();
 
-  CPUConfig *config;
+    CodeMemory *getCodeMemory() { return &code; }
 
-  int multi;
+    DataMemory *getDataMemory() { return &data; }
 
-  CPUStats stats;
+    const CPUStats &getStats() const { return stats; }
 
-  BOOL simulation_running;
-  BOOL restart;
+protected:
 
-  PipelineHistory history;
-  IO io;
+    Processor cpu;
 
- protected:
-  void clear();
-  int one_cycle(BOOL);
+    DataMemory data;
+    CodeMemory code;
 
- public:
-  void OnFileReset();
-  void OnExecuteSingle();
-  void OnFileMemory();
-  void OnExecuteMulticycle();
-  void OnExecuteRunto();
-  void OnExecuteStop();
-  void OnFullReset();
+    CPUConfig *config;
 
- public:
-  void dump_mem();
-  void dump_reg();
-  void dump_Terminal();
-  void show_stats();
-  void show_screen();
+    int multi;
+
+    CPUStats stats;
+
+    BOOL simulation_running;
+    BOOL restart;
+
+    PipelineHistory history;
+    IO io;
+
+protected:
+    void clear();
+
+    int one_cycle(BOOL);
+
+public:
+    void OnFileReset();
+
+    void OnExecuteSingle();
+
+    void OnFileMemory();
+
+    void OnExecuteMulticycle();
+
+    void OnExecuteRunto();
+
+    void OnExecuteStop();
+
+    void OnFullReset();
+
+public:
+    void dump_mem();
+
+    void dump_reg();
+
+    void dump_Terminal();
+
+    void show_stats();
+
+    void show_screen();
 
 };
 
